@@ -41,7 +41,7 @@ export class TimeCorrection {
         }
       )
       const data = await response.json()
-      return new Date(data.utc_datetime).getTime()
+      return new Date(data.dateTime+'Z').getTime()
     } catch (e) {
       logger.error(e.message)
       return null
