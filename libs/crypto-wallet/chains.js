@@ -7,8 +7,8 @@ const chains = {
     'chainId': toHex(POLYGON),
     'chainName': 'Polygon',
     'nativeCurrency': {
-      'name': 'Matic',
-      'symbol': 'MATIC',
+      'name': 'Polygon Ecosystem Token',
+      'symbol': 'POL',
       'decimals': 18
     },
     'rpcUrls': NETWORK_URLS.WRITE[POLYGON],
@@ -19,8 +19,8 @@ const chains = {
     'chainName': 'Polygon Mumbai',
     'name': 'Polygon Mumbai',
     'nativeCurrency': {
-      'name': 'Matic',
-      'symbol': 'MATIC',
+      'name': 'Polygon Ecosystem Token',
+      'symbol': 'POL',
       'decimals': 18
     },
     'rpcUrls': NETWORK_URLS.WRITE[POLYGON_MUMBAI],
@@ -30,8 +30,8 @@ const chains = {
     'chainId': toHex(LDE),
     'chainName': 'Polygon LDE',
     'nativeCurrency': {
-      'name': 'Matic',
-      'symbol': 'MATIC',
+      'name': 'Polygon Ecosystem Token',
+      'symbol': 'POL',
       'decimals': 18
     },
     'rpcUrls': NETWORK_URLS.WRITE[LDE],

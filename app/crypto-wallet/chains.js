@@ -14,8 +14,8 @@ var chains = _defineProperty(_defineProperty(_defineProperty({}, (0, _utils.toHe
   'chainId': (0, _utils.toHex)(_constants.POLYGON),
   'chainName': 'Polygon',
   'nativeCurrency': {
-    'name': 'Matic',
-    'symbol': 'MATIC',
+    'name': 'Polygon Ecosystem Token',
+    'symbol': 'POL',
     'decimals': 18
   },
   'rpcUrls': _constants.NETWORK_URLS.WRITE[_constants.POLYGON],
@@ -25,8 +25,8 @@ var chains = _defineProperty(_defineProperty(_defineProperty({}, (0, _utils.toHe
   'chainName': 'Polygon Mumbai',
   'name': 'Polygon Mumbai',
   'nativeCurrency': {
-    'name': 'Matic',
-    'symbol': 'MATIC',
+    'name': 'Polygon Ecosystem Token',
+    'symbol': 'POL',
     'decimals': 18
   },
   'rpcUrls': _constants.NETWORK_URLS.WRITE[_constants.POLYGON_MUMBAI],
@@ -35,8 +35,8 @@ var chains = _defineProperty(_defineProperty(_defineProperty({}, (0, _utils.toHe
   'chainId': (0, _utils.toHex)(_constants.LDE),
   'chainName': 'Polygon LDE',
   'nativeCurrency': {
-    'name': 'Matic',
-    'symbol': 'MATIC',
+    'name': 'Polygon Ecosystem Token',
+    'symbol': 'POL',
     'decimals': 18
   },
   'rpcUrls': _constants.NETWORK_URLS.WRITE[_constants.LDE],

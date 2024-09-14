@@ -55,7 +55,7 @@ var TimeCorrection = exports.TimeCorrection = /*#__PURE__*/function () {
             return response.json();
           case 6:
             data = _context.sent;
-            return _context.abrupt("return", new Date(data.utc_datetime).getTime());
+            return _context.abrupt("return", new Date(data.dateTime + 'Z').getTime());
           case 10:
             _context.prev = 10;
             _context.t0 = _context["catch"](0);

@@ -27,7 +27,20 @@ var LDE = exports.LDE = process.env.WEB3_LDE_CHAIN_ID;
 var LDE_URL = exports.LDE_URL = process.env.WEB3_LDE_CHAIN_URL;
 var NETWORK = exports.NETWORK = LDE || POLYGON;
 var NETWORK_URLS = exports.NETWORK_URLS = {
-  READ: _defineProperty(_defineProperty(_defineProperty(_defineProperty({}, POLYGON, ['https://rpc.ankr.com/polygon',
+  READ: _defineProperty(_defineProperty(_defineProperty(_defineProperty({}, POLYGON, ['https://polygon-mainnet.rpcfast.com?api_key=xbhWBI1Wkguk8SNMu1bvvLurPGLXmgwYeC4S6g2H7WdwFigZSmPWVZRxrskEQwIf',
+  // ??
+  'https://polygon.drpc.org',
+  // ??
+  'https://1rpc.io/matic',
+  // ??
+  'https://polygon-mainnet.public.blastapi.io',
+  // ??
+  'https://endpoints.omniatech.io/v1/matic/mainnet/public',
+  // ??
+  'https://gateway.tenderly.co/public/polygon',
+  // ??
+
+  'https://rpc.ankr.com/polygon',
   // ~90% success
   'https://polygon.blockpi.network/v1/rpc/public',
   // ~99% success
@@ -39,11 +52,13 @@ var NETWORK_URLS = exports.NETWORK_URLS = {
   // ~99% success
   'https://rpc-mainnet.matic.quiknode.pro' // ~99% success
   //
+  // 'https://polygon-mainnet.4everland.org/v1/37fa9972c1b1cd5fab542c7bdd4cde2f', // ~80%
   // 'https://polygon.rpc.blxrbdn.com',             // ~60% success
   // 'https://polygon-bor-rpc.publicnode.com        // ~60% success
   // 'https://polygon-pokt.nodies.app',             // ~65% success
   // 'https://polygon.llamarpc.com',                // ~60% success
   // 'https://polygon.meowrpc.com',                 // ~60% success
+  // 'https://api.zan.top/node/v1/polygon/mainnet/public',                        // 0%
   ]), POLYGON_MUMBAI, ['https://rpc-mumbai.matic.today']), MAINNET, ['https://eth.public-rpc.com']), LDE, [LDE_URL]),
   WRITE: _defineProperty(_defineProperty(_defineProperty(_defineProperty({}, POLYGON, ['https://polygon-rpc.com' // ~97% success
   ]), POLYGON_MUMBAI, ['https://rpc-mumbai.matic.today']), MAINNET, ['https://eth.public-rpc.com']), LDE, [LDE_URL])
