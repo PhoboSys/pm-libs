@@ -1,4 +1,12 @@
 {
   "presets": ["@babel/env", "@babel/react"],
-  "sourceMaps": true
+  "sourceMaps": true,
+  "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "@config": "./config",
+        "@libs": "./libs"
+      }
+    }]
+  ]
 }
