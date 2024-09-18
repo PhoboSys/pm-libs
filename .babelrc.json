@@ -4,6 +4,7 @@
   "plugins": [
     ["module-resolver", {
       "alias": {
+        "@constants": "./constants",
         "@config": "./config",
         "@libs": "./libs"
       }
