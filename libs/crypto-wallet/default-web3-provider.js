@@ -1,6 +1,6 @@
 import { JsonRpcProvider, Network as network, FetchRequest } from 'ethers'
 
-import logger from '../logger'
+import logger from '@libs/logger'
 
 import { NETWORK_URLS, NETWORK } from './constants'
 
