@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "big.js": "6.1.1",
+    "date-fns": "2.30.0",
     "debug": "4.3.2",
     "ethers": "6.13.2",
     "lodash": "4.17.21",
