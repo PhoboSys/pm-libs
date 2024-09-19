@@ -1,0 +1,1 @@
+{"version":3,"file":"dispatchType.js","names":["COMMAND","exports","QUERY"],"sources":["../../libs/redux-cqrs/dispatchType.js"],"sourcesContent":["export const COMMAND = 'command'\nexport const QUERY = 'query'\n"],"mappings":";;;;;;AAAO,IAAMA,OAAO,GAAAC,OAAA,CAAAD,OAAA,GAAG,SAAS;AACzB,IAAME,KAAK,GAAAD,OAAA,CAAAC,KAAA,GAAG,OAAO","ignoreList":[]}
