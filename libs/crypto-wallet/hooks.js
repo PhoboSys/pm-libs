@@ -1,8 +1,9 @@
+import { Connectors, useWeb3React, WalletConnect, Network, MetaMask } from '@oracly/pm-wallet'
+import { getConnName, getAddChainParameters } from '@oracly/pm-wallet'
+
 import { isFunction } from 'lodash'
 import { useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import { Contract } from 'ethers'
-import { Connectors, useWeb3React, WalletConnect, Network, MetaMask } from 'pm-wallet'
-import { getConnName, getAddChainParameters } from 'pm-wallet'
 
 import { DEFAULT_WEB3_PROVIDER } from './default-web3-provider'
 import IERC20 from './abis/@openzeppelin/IERC20.json'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserProvider } from 'ethers'
-import { Connectors, Web3ReactProvider } from 'pm-wallet'
+import { Connectors, Web3ReactProvider } from '@oracly/pm-wallet'
 
 export const WalletProvider = ({ children }) => {
   return (

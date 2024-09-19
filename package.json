@@ -1,7 +1,9 @@
 {
   "name": "pm-libs",
+  "description": "OraclyV1 dApp Common libraries",
   "version": "1.0.0",
-  "description": "",
+  "author": "Oracly Team <team@oracly.io>",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "build:lde": "./bin/dev.sh",
@@ -9,8 +11,6 @@
     "build": "rm -rf app && NODE_ENV=production babel libs --out-dir app --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "YOUR_NAME <YOUR_EMAIL>",
-  "license": "ISC",
   "peerDependencies": {
     "react": ">=17.0.2"
   },
@@ -20,10 +20,10 @@
     "debug": "4.3.2",
     "ethers": "6.13.2",
     "lodash": "4.17.21",
-    "pm-wallet": "github:PhoboSys/pm-wallet"
+    "@oracly/pm-wallet": "1.0.1"
   },
   "devDependencies": {
-    "@aoberoi/chokidar-cli": "^2.0.0",
+    "@aoberoi/chokidar-cli": "2.0.0",
     "@babel/cli": "^7.22.10",
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
