@@ -5,10 +5,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.web3client = exports.useWallet = exports.useBalance = exports.useAllowance = void 0;
+var _pmWallet = require("@oracly/pm-wallet");
 var _lodash = require("lodash");
 var _react = require("react");
 var _ethers = require("ethers");
-var _pmWallet = require("pm-wallet");
 var _defaultWeb3Provider = require("./default-web3-provider");
 var _IERC = _interopRequireDefault(require("./abis/@openzeppelin/IERC20.json"));
 var _constants = require("./constants");
