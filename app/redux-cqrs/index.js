@@ -211,7 +211,7 @@ function connectDecorator(reduxConnect, stateMapper, dispatchMapper, merge, opti
 }
 function findAction(action, type) {
   while (action && action.type !== type) {
-    action = get(action, ['metadata', 'origin']);
+    action = (0, _lodash.get)(action, ['metadata', 'origin']);
   }
   return action;
 }
