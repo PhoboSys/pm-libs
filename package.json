@@ -1,6 +1,6 @@
 {
-  "name": "pm-libs",
-  "description": "OraclyV1 dApp Common libraries",
+  "name": "@oracly/pm-libs",
+  "description": "Oracly V1 dApp Common libraries",
   "version": "1.0.0",
   "author": "Oracly Team <team@oracly.io>",
   "license": "MIT",
@@ -25,12 +25,12 @@
   },
   "devDependencies": {
     "@aoberoi/chokidar-cli": "2.0.0",
-    "@babel/cli": "^7.22.10",
-    "@babel/core": "^7.22.10",
-    "@babel/preset-env": "^7.22.10",
-    "@babel/preset-react": "^7.22.5",
-    "babel-plugin-module-resolver": "^5.0.0",
-    "concurrently": "^5.1.0",
+    "@babel/cli": "7.25.6",
+    "@babel/core": "7.25.2",
+    "@babel/preset-env": "7.25.4",
+    "@babel/preset-react": "7.24.7",
+    "babel-plugin-module-resolver": "5.0.2",
+    "concurrently": "5.3.0"
     "resize-observer-polyfill": "1.5.1"
   },
   "exports": {
