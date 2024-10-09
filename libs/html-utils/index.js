@@ -16,21 +16,21 @@ export function htmlPercent(percent, precision = config.maximum_fraction_digits_
   return (floor(mul(percent, 100), precision) || 0) + '%'
 }
 
-export function htmlCurrentySymboled(amount, quote) {
+export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = 8) {
   if (isNaN(+amount)) return ''
 
   return CurrencyFormatter.formatSymboled(amount, quote, {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
+    maximumFractionDigits,
   })
 }
 
-export function htmlCurrencyNamed(amount, quote) {
+export function htmlCurrencyNamed(amount, quote, maximumFractionDigits = 8) {
   if (isNaN(+amount)) return ''
 
   return CurrencyFormatter.formatNamed(amount, quote, {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
+    maximumFractionDigits,
   })
 }
 

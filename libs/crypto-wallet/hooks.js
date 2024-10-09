@@ -173,6 +173,8 @@ export const useWallet = (autoSelectChain = true) => {
         catch (error) {
           // swallow errors
           action.current = { name, error }
+          console.log(error)
+          throw error
           // switch chain is pending swallow error, other reset()
           // if (error.code !== -32002) web3React.reset()
         }
