@@ -1,4 +1,4 @@
-import { keccak256 as lib_keccak256, toUtf8Bytes, AbiCoder } from 'ethers'
+import { keccak256 as lib_keccak256, solidityPackedKeccak256, toUtf8Bytes, AbiCoder } from 'ethers'
 
 import { BETTOR_ICON_COLORS } from '@constants/bettorIcons'
 
@@ -13,6 +13,20 @@ export function keccak256(values, types) {
         values
       )
     )
+  } catch (ex) {
+    logger.error(ex)
+    return null
+  }
+
+}
+
+export function keccak256Packed(values, types) {
+
+  try {
+    return solidityPackedKeccak256(
+      types,
+      values
+    )  
   } catch (ex) {
     logger.error(ex)
     return null

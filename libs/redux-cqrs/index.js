@@ -54,6 +54,7 @@ export function cqrsMiddleware(asynchronous) {
         ..._action,
         type: rejected(type),
         metadata: {
+          ...action.metadata,
           dispatchType,
           status: THROTTLED,
           origin: action,
@@ -75,6 +76,7 @@ export function cqrsMiddleware(asynchronous) {
           ..._action,
           type: success(type),
           metadata: {
+            ...action.metadata,
             dispatchType,
             status: SUCCEED,
             origin: action,
@@ -92,6 +94,7 @@ export function cqrsMiddleware(asynchronous) {
           ..._action,
           type: fails(type),
           metadata: {
+            ...action.metadata,
             dispatchType,
             status: FAILED,
             origin: action,
@@ -142,12 +145,12 @@ export function cqrsDispatchMapper(dispatchMapper) {
     const actions = dispatchMapper(
       {
         command: (actionName) => {
-          const result = (args) => dispatch(command(actionName, args))
+          const result = (args, metadata) => dispatch(command(actionName, args, metadata))
           result.actionType = actionName
           return result
         },
         query: (actionName) => {
-          const result = (args) => dispatch(query(actionName, args))
+          const result = (args, metadata) => dispatch(query(actionName, args, metadata))
           result.actionType = actionName
           return result
         }
