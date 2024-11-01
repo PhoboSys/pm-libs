@@ -60,10 +60,11 @@ jobs:
 
         elif [[ "${{ github.ref_name }}" == "staging" ]]; then
 
-          VER="$VER@${GITHUB_SHA:0:9}"
+          VER="$VER-${GITHUB_SHA:0:9}"
 
         fi
 
+        echo "$VER"
         jq ". += {\"version\":\"$VER\"}" package.json > new_pj
         mv new_pj package.json
 
