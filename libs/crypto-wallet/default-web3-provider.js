@@ -1,4 +1,4 @@
-import { JsonRpcProvider, Network as network, FetchRequest } from 'ethers'
+import { JsonRpcProvider, Network as network, FetchRequest, dataLength } from 'ethers'
 
 import logger from '@libs/logger'
 
@@ -216,6 +216,8 @@ class PM_FetchRequest extends FetchRequest {
   validateResponse(response) {
     const statusCodeSuccess = response.statusCode >= 200 && response.statusCode < 300
     const body = JSON.parse(new TextDecoder().decode(response.body))
+
+    if (body.result === '0x') body.error = 'BAD_DATA (value="0x")'
 
     if (statusCodeSuccess && !body.error) return
 

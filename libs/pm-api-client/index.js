@@ -1,4 +1,5 @@
 export * from './ApiClient'
+export * from './GraphClient'
 
 import { PriceFeedApi as _PriceFeedApi } from './PriceFeedApi'
 import { ChatApi as _ChatApi } from './ChatApi'
