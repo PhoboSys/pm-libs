@@ -15,13 +15,15 @@
     "react": ">=17.0.2"
   },
   "dependencies": {
+    "@oracly/pm-wallet": "1.0.1",
     "big.js": "6.1.1",
     "date-fns": "2.30.0",
     "debug": "4.3.2",
     "dot-prop-immutable": "2.1.1",
     "ethers": "6.13.2",
-    "lodash": "4.17.21",
-    "@oracly/pm-wallet": "1.0.1"
+    "graphql": "16.9.0",
+    "graphql-tag": "2.12.6",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "@aoberoi/chokidar-cli": "2.0.0",
