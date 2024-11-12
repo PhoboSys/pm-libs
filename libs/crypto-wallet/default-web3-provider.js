@@ -7,7 +7,7 @@ import { NETWORK_URLS, NETWORK } from './constants'
 class RpcUrls {
 
   static localStoragePath = '__rpc-requests-statistics'
-  static localStorageVersion = 'v4'
+  static localStorageVersion = 'v5'
   static lockDurationMs = 1 * 60 * 60 * 1000 // 1 hour
   static maxErrorsLimit = 20
   static minRequestsForLock = 10

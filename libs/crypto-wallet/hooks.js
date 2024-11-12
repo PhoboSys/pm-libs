@@ -65,6 +65,13 @@ export const web3client = {
       if (!abi) logError('abi in missing!')
     }
   },
+  isContract: async (address) => {
+    try {
+      const code = await DEFAULT_WEB3_PROVIDER.getCode(address)
+      if (code !== '0x') return true
+    } catch (error) {}
+    return false
+  }
 }
 
 const useERC20Client = (call, erc20, interval, chainId, account) => {
