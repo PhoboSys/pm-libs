@@ -210,7 +210,7 @@ export const useWallet = (autoSelectChain = true) => {
         if (c) {
           const [connector,] = c
           if (!(window.ethereum) && connectorId === 'injected') {
-            window.open('https://wallet.uniswap.org/', '_blank')
+            window.open('https://metamask.io/', '_blank')
           } else {
 
             if (connector?.deactivate) void connector.deactivate()
