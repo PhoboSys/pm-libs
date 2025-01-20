@@ -9,7 +9,7 @@ let INTERVAL = null
 export class TimeCorrection {
 
   static ATOMIC_CLOCK_URL = config.atomic_clock_url
-  static AUTOCURRECT_PERIOD = 600000 // 10 min
+  static AUTOCURRECT_PERIOD = 1800000 // 30 min
   #correction = 0
 
   set correction(value) {
@@ -61,14 +61,22 @@ export class TimeCorrection {
     if (SINGLETON === null) {
       SINGLETON = new TimeCorrection(onchange)
       SINGLETON.synchronizeTime()
-      INTERVAL = setInterval(SINGLETON.synchronizeTime, cfg.autocurrect || TimeCorrection.AUTOCURRECT_PERIOD)
+      INTERVAL = setInterval(
+        SINGLETON.synchronizeTime,
+        (Number(cfg?.autocurrect) || TimeCorrection.AUTOCURRECT_PERIOD) * 1000,
+        period
+      )
     } else {
       logger.warn('init was aleady called!')
     }
   }
 
+  static sync() {
+    if (SINGLETON) SINGLETON.synchronizeTime()
+  }
+
   static abort() {
-    clearInterval(INTERVAL)
+    if (INTERVAL) clearInterval(INTERVAL)
   }
 
 }

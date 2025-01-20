@@ -242,6 +242,10 @@ export function getDateOfExpire(date, expireDays = 30) {
   return formatDate(datetime, 'MMMM d, yyyy')
 }
 
-export function init() {
-  TimeCorrection.init(correction => window.time_correction = correction)
+export function initTimeCorrection(cfg) {
+  TimeCorrection.init(correction => window.time_correction = correction, cfg)
+}
+
+export function syncTime() {
+  TimeCorrection.sync()
 }
