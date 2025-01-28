@@ -22,6 +22,7 @@ export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = 8) {
   return CurrencyFormatter.formatSymboled(amount, quote, {
     minimumFractionDigits: 2,
     maximumFractionDigits,
+    roundingMode: 'trunc',
   })
 }
 
@@ -31,6 +32,7 @@ export function htmlCurrencyNamed(amount, quote, maximumFractionDigits = 8) {
   return CurrencyFormatter.formatNamed(amount, quote, {
     minimumFractionDigits: 2,
     maximumFractionDigits,
+    roundingMode: 'trunc',
   })
 }
 
@@ -47,6 +49,7 @@ export function htmlCurrency(amount, maximumFractionDigits = config.maximum_frac
   return CurrencyFormatter.formatDefault(amount, {
     minimumFractionDigits: 0,
     maximumFractionDigits,
+    roundingMode: 'trunc',
   })
 }
 
