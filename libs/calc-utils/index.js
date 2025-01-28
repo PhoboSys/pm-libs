@@ -80,44 +80,6 @@ export function futureProfitPercent(prizefunds, wager) {
   return mapValues(__futureReturn(prizefunds, wager), ret => ret.div(wager).minus(1).toString())
 }
 
-
-function __actualReturn(prizefunds, wager, position) {
-  if (!__inNotZeroNumbers(prizefunds?.[PRIZEFUNDS.TOTAL], prizefunds?.[position], wager)) return ZERO
-
-  wager = Big(wager)
-  prizefunds = mapValues(prizefunds, prizefund => Big(prizefund))
-
-  const result = prizefunds[PRIZEFUNDS.TOTAL]
-    .times(
-      wager.div(prizefunds[position])
-    )
-    .times(
-      ONE.minus(VIGORISH)
-    )
-
-  return result
-}
-
-export function actualReturn(prizefunds, wager, position) {
-  const result = __actualReturn(prizefunds, wager, position)
-  return result.toString()
-}
-
-export function actualProfit(prizefunds, wager, position) {
-  const result = __actualReturn(prizefunds, wager, position)
-
-  return result.minus(wager).toString()
-}
-
-export function actualProfitPercent(prizefunds, wager, position) {
-  if (!__inNotZeroNumbers(prizefunds?.[PRIZEFUNDS.TOTAL], wager, position)) return ZERO.toString()
-
-  const result = __actualReturn(prizefunds, wager, position)
-
-  wager = Big(wager)
-  return result.div(wager).minus(1).toString()
-}
-
 export function futureDividends(round1, round2, wager, vigorish = 0.01) {
   if (!__inNumbers(round1, round2, wager, vigorish)) return 0
 
