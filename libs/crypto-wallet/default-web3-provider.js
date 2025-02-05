@@ -4,16 +4,71 @@ import logger from '@libs/logger'
 
 import { NETWORK_URLS, NETWORK } from './constants'
 
+class RpcUrlsLocalStorage {
+  static localStoragePath = '__rpc-requests-statistics'
+  static localStorageVersion = 'v6'
+
+  read() {
+    const data = JSON.parse(window.localStorage.getItem(RpcUrlsLocalStorage.localStoragePath) || '{}')
+
+    if (data && data.urls && data.version === RpcUrlsLocalStorage.localStorageVersion) {
+      for (const url in data.urls) {
+        const urldata = data.urls[url]
+        if (urldata.successRate) urldata.successRate = this.#fromPercent2Decimal(urldata.successRate)
+        if (urldata.lastSuccessAt) urldata.lastSuccessAt = this.#fromDate2Timestamp(urldata.lastSuccessAt)
+        if (urldata.lastFailAt) urldata.lastFailAt = this.#fromDate2Timestamp(urldata.lastFailAt)
+      }
+      return data
+    }
+
+    this.delete()
+
+    return {
+      urls: {},
+      version: RpcUrlsLocalStorage.localStorageVersion,
+    }
+  }
+
+  update(urls) {
+    urls = urls.reduce((acc, url_data) => {
+      const data = { ...url_data }
+
+      delete data.url
+
+      if (data.successRate) data.successRate = this.#fromDecimal2Percent(data.successRate)
+      if (data.lastSuccessAt) data.lastSuccessAt = this.#fromTimestamp2Date(data.lastSuccessAt)
+      if (data.lastFailAt) data.lastFailAt = this.#fromTimestamp2Date(data.lastFailAt)
+
+      if (Object.keys(data).length) acc[url_data.url] = data
+
+      return acc
+    }, {})
+
+    window.localStorage.setItem(RpcUrlsLocalStorage.localStoragePath, JSON.stringify({
+      version: RpcUrlsLocalStorage.localStorageVersion,
+      urls,
+    }))
+  }
+
+  delete() {
+    localStorage.removeItem(RpcUrlsLocalStorage.localStoragePath)
+  }
+
+  #fromDecimal2Percent(decimal) { return decimal*100 + '%' }
+  #fromPercent2Decimal(percent) { return (+(String(percent).split('%')[0]))/100 }
+  #fromDate2Timestamp(date) { return Date.parse(date) }
+  #fromTimestamp2Date(timestamp) { return new Date(timestamp).toString() }
+}
+
 class RpcUrls {
 
-  static localStoragePath = '__rpc-requests-statistics'
-  static localStorageVersion = 'v5'
   static lockDurationMs = 1 * 60 * 60 * 1000 // 1 hour
   static maxErrorsLimit = 20
   static minRequestsForLock = 10
   static minSuccessRate = 0.70
 
-  constructor(urls) {
+  constructor(urls, persisted) {
+    this.persisted = persisted
     this.urls = this.#withPersisted(urls.map((url) => ({ url })))
   }
 
@@ -36,25 +91,25 @@ class RpcUrls {
 
   }
 
-  updateSuccessStatistic(url) {
+  success(url) {
     const index = this.urls.findIndex((url_data) => url_data.url === url)
     if (index !== -1) {
       this.urls[index].successTotal = (this.urls[index].successTotal || 0) + 1
       this.urls[index].lastSuccessAt = new Date().getTime()
-      this.#updateSuccessRate(url)
-      this.#updateLocalStorageStatistic()
+      this.#updateRates(index)
+      this.persisted.update(this.urls)
     }
   }
 
-  updateFailStatistic(url, error) {
+  fail(url, error) {
     const index = this.urls.findIndex((url_data) => url_data.url === url)
     if (index !== -1) {
       this.urls[index].errors = [...(this.urls[index].errors || []), error]
       this.urls[index].lastFailAt = new Date().getTime()
       this.urls[index].failedTotal = (this.urls[index].failedTotal || 0) + 1
       if (this.urls[index].errors.length > RpcUrls.maxErrorsLimit) this.urls[index].errors.shift()
-      this.#updateSuccessRate(url)
-      this.#updateLocalStorageStatistic()
+      this.#updateRates(index)
+      this.persisted.update(this.urls)
     }
   }
 
@@ -73,75 +128,37 @@ class RpcUrls {
     return isEnoughRequestsForLock && isSuccessRateLow && hasFail && notLongAgoFailed
   }
 
-  #updateSuccessRate(url) {
-    const index = this.urls.findIndex((url_data) => url_data.url === url)
-    if (index !== -1) {
-      const successTotal = this.urls[index].successTotal || 0
-      const failedTotal = this.urls[index].failedTotal || 0
-      const total = successTotal + failedTotal
+  #updateRates(index) {
+    let successTotal = this.urls[index].successTotal || 0
+    let failedTotal = this.urls[index].failedTotal || 0
 
-      let successRate
-      if (total === 0) successRate = 0
-      else if (successTotal === 0) successRate = 0
-      else if (failedTotal === 0) successRate = 1
-      else successRate = Math.floor((successTotal/total)*100)/100
-      this.urls[index].successRate = successRate
+    if (
+      successTotal % 2 === 0 &&
+      failedTotal % 2 === 0 &&
+      (successTotal/2 + failedTotal/2) >= RpcUrls.minRequestsForLock
+    ) {
+      this.urls[index].successTotal = successTotal = successTotal/2
+      this.urls[index].failedTotal = failedTotal = failedTotal/2
     }
+
+    const total = successTotal + failedTotal
+
+    let successRate
+    if (total === 0) successRate = 0
+    else if (successTotal === 0) successRate = 0
+    else if (failedTotal === 0) successRate = 1
+    else successRate = Math.floor((successTotal/total)*100)/100
+    this.urls[index].successRate = successRate
   }
 
   #withPersisted(urls) {
-    const persisted = this.#getLocalStorageStatistic()
-
-    if (persisted && persisted.urls && persisted.version === RpcUrls.localStorageVersion) {
-      return urls.map((url_data) => {
-        const persisted_url_data = persisted.urls[url_data.url] || {}
-        const data = { ...url_data, ...persisted_url_data }
-
-        if (data.successRate) data.successRate = this.#fromPercent2Decimal(data.successRate)
-        if (data.lastSuccessAt) data.lastSuccessAt = this.#fromDate2Timestamp(data.lastSuccessAt)
-        if (data.lastFailAt) data.lastFailAt = this.#fromDate2Timestamp(data.lastFailAt)
-
-        return data
-      })
-    } else {
-      this.#removeLocalStorageStatistic()
-      return urls
-    }
+    const persisted = this.persisted.read()
+    return urls.map((url_data) => {
+      const persisted_url_data = persisted.urls[url_data.url] || {}
+      return { ...url_data, ...persisted_url_data }
+    })
   }
 
-  #updateLocalStorageStatistic() {
-    const urls = this.urls.reduce((acc, url_data) => {
-      const data = { ...url_data }
-
-      delete data.url
-
-      if (data.successRate) data.successRate = this.#fromDecimal2Percent(data.successRate)
-      if (data.lastSuccessAt) data.lastSuccessAt = this.#fromTimestamp2Date(data.lastSuccessAt)
-      if (data.lastFailAt) data.lastFailAt = this.#fromTimestamp2Date(data.lastFailAt)
-
-      if (Object.keys(data).length) acc[url_data.url] = data
-
-      return acc
-    }, {})
-
-    window.localStorage.setItem(RpcUrls.localStoragePath, JSON.stringify({
-      version: RpcUrls.localStorageVersion,
-      urls,
-    }))
-  }
-
-  #getLocalStorageStatistic() {
-    return JSON.parse(window.localStorage.getItem(RpcUrls.localStoragePath) || '{}')
-  }
-
-  #removeLocalStorageStatistic() {
-    localStorage.removeItem(RpcUrls.localStoragePath)
-  }
-
-  #fromDecimal2Percent(decimal) { return decimal*100 + '%' }
-  #fromPercent2Decimal(percent) { return (+(String(percent).split('%')[0]))/100 }
-  #fromDate2Timestamp(date) { return Date.parse(date) }
-  #fromTimestamp2Date(timestamp) { return new Date(timestamp).toString() }
 }
 
 class PM_FetchRequest extends FetchRequest {
@@ -188,7 +205,7 @@ class PM_FetchRequest extends FetchRequest {
 
       this.validateResponse(res)
 
-      this.rpc_urls.updateSuccessStatistic(req.url)
+      this.rpc_urls.success(req.url)
 
       return res
 
@@ -200,7 +217,7 @@ class PM_FetchRequest extends FetchRequest {
 
       const canRetry = requested.length < this.rpc_urls.urls_unlocked.length && window.navigator?.onLine
 
-      this.rpc_urls.updateFailStatistic(req.url, e.toString())
+      this.rpc_urls.fail(req.url, e.toString())
 
       if (canRetry) return this.getUrlFunc(req, signal, requested)
       else logger.warn('Request was aborted cause all attempts were used. Attempted:', requested.join(', '))
@@ -266,7 +283,12 @@ class PM_FetchRequest extends FetchRequest {
 }
 
 export const DEFAULT_WEB3_PROVIDER = new JsonRpcProvider(
-  new PM_FetchRequest(new RpcUrls(NETWORK_URLS.READ[NETWORK])),
+  new PM_FetchRequest(
+    new RpcUrls(
+      NETWORK_URLS.READ[NETWORK],
+      new RpcUrlsLocalStorage()
+    )
+  ),
   network.from(NETWORK),
   {
     staticNetwork: network.from(NETWORK),
