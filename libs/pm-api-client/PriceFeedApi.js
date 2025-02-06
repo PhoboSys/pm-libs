@@ -18,7 +18,7 @@ export class PriceFeedApi extends ApiClient {
     return this.get(`/pricefeed/${pricefeed}/`, {
       f: from,
       t: to,
-      s: sampling
+      s: sampling || 0
     })
   }
 
