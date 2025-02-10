@@ -12,8 +12,15 @@ export default class Persistence {
       for (const storageName in config.storages) {
         // eslint-disable-next-line
         const { storages, ...globalConfig } = config
-        const storageCfg = { ...config.storages[storageName], storageName: storageName }
-        const cfg = { ...globalConfig, ...storageCfg }
+        const storageCfg = { ...config.storages[storageName], storageName }
+        const cfg = {
+          ...globalConfig,
+          ...storageCfg,
+          invalidate: [
+            ...(globalConfig.invalidate || []),
+            ...(storageCfg.invalidate || []),
+          ]
+        }
 
         if (!Persistence[storageName]) Persistence[storageName] = Factory.create(cfg)
 

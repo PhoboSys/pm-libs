@@ -43,10 +43,25 @@ export default class Storage {
     } catch (e) {
       logger.info('Storage state could not be saved!', e)
 
-      //clean up all keys except current storage key
-      this.clearStorageExceptCurrentKey(storageKey)
+      if (e.name == 'QuotaExceededError') {
+        this._dropStorage()
+        logger.info('Drop storage')
+        window.location.reload()
+      } else {
+        //clean up all keys except current storage key
+        this.clearStorageExceptCurrentKey(storageKey)
+      }
     }
   }
+
+  _dropStorage() {
+    const allKeys = this._getAllKeys()
+
+    for (const idx in allKeys) {
+      this._removeStorageState(allKeys[idx])
+    }
+  }
+
 
   clearStorageExceptCurrentKey(key) {
     const allKeys = this._getAllKeys()
@@ -77,7 +92,7 @@ export default class Storage {
 
   _getAllKeys() {
     const allKeys = []
-    for (const key in this._getStorageState()) {
+    for (const key of Object.getOwnPropertyNames(this._getStorageState())) {
       allKeys.push(key)
     }
     return allKeys

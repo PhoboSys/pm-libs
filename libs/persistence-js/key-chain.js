@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { castArray, get } from 'lodash'
 
 export default class KeyChain {
 
@@ -13,6 +13,7 @@ export default class KeyChain {
     this.resource = config.resource
     this.lifeTime = config.lifeTime || 365 //days
     this.lifeTimeMs = this.lifeTime * 24 * 60 * 60 * 1000
+    this.invalidate = config.invalidate
   }
 
   findInvalidKeys(allKeys) {
@@ -21,7 +22,8 @@ export default class KeyChain {
 
     const invalidKeys = decoratedKeys.filter(key => (
       key.isAppKey && this._isKeyExpired(key) ||
-      key.isInstanceKey && validKey !== get(key, 'key')
+      key.isInstanceKey && validKey !== key.key ||
+      key.isInvalid
     ))
 
     const result = invalidKeys.map(decoratedKey => decoratedKey.key)
@@ -63,10 +65,12 @@ export default class KeyChain {
     allKeys = allKeys || []
     const apprex = this._getAppKeyRex(allKeys)
     const insrex = this._getInstanceKeyRex()
+    const invalidrexs = this._getInvalidKeysRex()
     const decoratedKeys = allKeys.map(key => ({
       key: key,
       isAppKey: apprex.test(key),
       isInstanceKey: insrex.test(key),
+      isInvalid: invalidrexs.some((invalidrex) => invalidrex.test(key)),
       timestamp: +get(apprex.exec(key), 1, 0)
     }))
     return decoratedKeys
@@ -78,11 +82,29 @@ export default class KeyChain {
     , get(keys, 0))
   }
 
+  getInstanceKeyRex(appName, storageName, storageId) {
+    return new RegExp(`_${appName}__state__${storageName}__${storageId}__.*?_?_?([^_]*)$`)
+  }
+
   _getInstanceKeyRex() {
-    return new RegExp(`_${this.appName}__state__${this.storageName}__${this.storageId}__.*?_?_?([^_]*)$`)
+    return this.getInstanceKeyRex(this.appName, this.storageName, this.storageId)
   }
 
   _getAppKeyRex() {
     return new RegExp(`_${this.appName}__state__.*?_?_?([^_]*)$`)
+  }
+
+  _getInvalidKeysRex() {
+    return this.invalidate.map((key) => {
+      if (key instanceof RegExp) return key
+      if (typeof key === 'string') return new RegExp(key)
+      if (typeof key === 'function') {
+        const keys = castArray(key(this))
+        return keys.map((key) => {
+          if (key instanceof RegExp) return key
+          if (typeof key === 'string') return new RegExp(key)
+        }).filter(i => i)
+      }
+    }).flat()
   }
 }
