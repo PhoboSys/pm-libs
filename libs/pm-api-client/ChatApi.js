@@ -10,4 +10,6 @@ export class ChatApi extends ApiClient {
 
   getChannelOnline = (channel) => this.get(`/channels/${channel}/online`)
 
+  getChannelsOnline = (channels) => this.get(`/channels/online`, { ch: channels })
+
 }

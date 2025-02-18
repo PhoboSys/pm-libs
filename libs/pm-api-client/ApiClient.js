@@ -14,6 +14,14 @@ export class ApiClient {
       url = null
     }
 
+    if (params) {
+      params = Object.entries(params).reduce((acc, [k, v]) => {
+        if (Array.isArray(v)) for (const item of v) acc.push([k, item])
+        else acc.push([k, v])
+        return acc
+      }, [])
+    }
+      
     return this.#request(GET, this.#buildUrl(url + '?' + new URLSearchParams(params)), null)
   }
 
