@@ -34,6 +34,7 @@ export const web3client = {
       return DEFAULT_WEB3_PROVIDER.getBalance(address, args)
     }
   },
+  getBlockNumber: () => DEFAULT_WEB3_PROVIDER.getBlockNumber(),
   call: (...args) => WEB3_PROVIDER.call(...args),
   sendTransaction: async (...args) => {
     const signer = await auth
@@ -71,6 +72,37 @@ export const web3client = {
       if (code !== '0x') return true
     } catch (error) {}
     return false
+  },
+  contract: (abi, address) => {
+    function read(method, ...args) {
+      args = address ? [address, ...args] : args
+  
+      const options = args.at(-1) || {}
+      if (!options.blockTag) delete options.blockTag
+      const client = web3client.get(args.at(0), abi, { readonly: true })
+      if (isFunction(client[method])) return client[method](...args.slice(1))
+      return Promise.reject('Method Not Found')
+    }
+  
+    function write(method, ...args) {
+      args = address ? [address, ...args] : args
+      const client = web3client.get(args.at(0), abi)
+      if (isFunction(client[method])) return client[method](...args.slice(1))
+      return Promise.reject('Method Not Found')
+    }
+  
+    function staticCall(method, ...args) {
+      args = address ? [address, ...args] : args
+      const client = web3client.get(args.at(0), abi)
+      if (isFunction(client[method])) return client[method].staticCall(...args.slice(1))
+      return Promise.reject('Method Not Found')
+    }
+  
+    return {
+      read,
+      write,
+      staticCall,
+    }
   }
 }
 

@@ -23,14 +23,14 @@ export function minmax(data) {
   return [minimum, maximum]
 }
 
-function __inNotZeroNumbers(...args) {
+export function __inNotZeroNumbers(...args) {
   for (let num of args) {
     if (!Number(num)) return false
   }
   return true
 }
 
-function __inNumbers(...args) {
+export function __inNumbers(...args) {
   for (let num of args) {
     if (
       num === '' ||
