@@ -16,7 +16,7 @@ export function htmlPercent(percent, precision = config.maximum_fraction_digits_
   return (floor(mul(percent, 100), precision) || 0) + '%'
 }
 
-export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = 8) {
+export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = config.maximum_fraction_digits) {
   if (isNaN(+amount)) return ''
 
   return CurrencyFormatter.formatSymboled(amount, quote, {
@@ -26,7 +26,7 @@ export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = 8) {
   })
 }
 
-export function htmlCurrencyNamed(amount, quote, maximumFractionDigits = 8) {
+export function htmlCurrencyNamed(amount, quote, maximumFractionDigits = config.maximum_fraction_digits) {
   if (isNaN(+amount)) return ''
 
   return CurrencyFormatter.formatNamed(amount, quote, {

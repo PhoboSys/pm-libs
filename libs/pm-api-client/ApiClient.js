@@ -8,7 +8,7 @@ export class ApiClient {
     this.baseUrl = baseUrl
   }
 
-  get(url, params) {
+  get(url, params, options) {
     if (isObject(url)) {
       params = url
       url = null
@@ -22,34 +22,34 @@ export class ApiClient {
       }, [])
     }
       
-    return this.#request(GET, this.#buildUrl(url + '?' + new URLSearchParams(params)), null)
+    return this.#request(GET, this.#buildUrl(url + '?' + new URLSearchParams(params)), null, options)
   }
 
-  post(url, params) {
+  post(url, params, options) {
     if (isObject(url)) {
       params = url
       url = null
     }
 
-    return this.#request(POST, this.#buildUrl(url), params)
+    return this.#request(POST, this.#buildUrl(url), params, options)
   }
 
-  put(url, params) {
+  put(url, params, options) {
     if (isObject(url)) {
       params = url
       url = null
     }
 
-    return this.#request(PUT, this.#buildUrl(url), params)
+    return this.#request(PUT, this.#buildUrl(url), params, options)
   }
 
-  delete(url, params) {
+  delete(url, params, options) {
     if (isObject(url)) {
       params = url
       url = null
     }
 
-    return this.#request(DELETE, this.#buildUrl(url), params)
+    return this.#request(DELETE, this.#buildUrl(url), params, options)
   }
 
   #concatUrl(...args) {
@@ -70,10 +70,11 @@ export class ApiClient {
     return this.#concatUrl(this.baseUrl, toString(url))
   }
 
-  #request(method, url, params) {
+  #request(method, url, params, options) {
     return window.fetch(url, {
       headers: {
         'accept': 'application/json, text/plain, */*',
+        ...(options?.headers || {})
       },
       referrerPolicy: 'strict-origin-when-cross-origin',
       body: params ? JSON.stringify(params) : params,
