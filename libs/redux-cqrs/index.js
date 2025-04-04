@@ -27,7 +27,7 @@ function printError(msg) {
   console.error(msg) // eslint-disable-line
 }
 
-function serializer(key, value) {
+export function serializer(key, value) {
   if (typeof value === 'bigint') value = String(value)
   if (typeof value === 'undefined') value = String(null)
   return value

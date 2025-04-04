@@ -3,54 +3,120 @@ import Big from 'big.js'
 
 import config from '@config'
 
-import { eq, gt, lt, mul } from '../calc-utils'
+import { round, eq, lt, mul } from '../calc-utils'
 import { CurrencyFormatter } from './currency'
 
-export function htmlPercentSigned(percent, precision = config.maximum_fraction_digits_precent) {
-  let percentStr = htmlPercent(percent, precision)
+function normalizeToMinimumAmount(amount = 0, precision) {
+  const HTML_LOWEST_AMOUNT = Math.pow(10, -(precision))
+
+  if (!eq(amount, 0) && lt(Big(amount).abs().toString(), HTML_LOWEST_AMOUNT)) {
+    return { lowest: true, amount: HTML_LOWEST_AMOUNT, negative: lt(amount, 0) }
+  }
+  
+  return { lowest: false, amount, negative: lt(amount, 0) }
+}
+
+export function htmlPercentSigned(percent, options) {
+  let percentStr = htmlPercent(percent, options)
   if (percent > 0) percentStr = '+' + percentStr
   return percentStr
 }
 
-export function htmlPercent(percent, precision = config.maximum_fraction_digits_precent) {
-  return (floor(mul(percent, 100), precision) || 0) + '%'
-}
+export function htmlPercent(percent, { precision = config.maximum_fraction_digits_precent, threshold = false } = {}) {
 
-export function htmlCurrentySymboled(amount, quote, maximumFractionDigits = config.maximum_fraction_digits) {
-  if (isNaN(+amount)) return ''
+  let formatted = mul(percent, 100)
 
-  return CurrencyFormatter.formatSymboled(amount, quote, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits,
-    roundingMode: 'trunc',
-  })
-}
-
-export function htmlCurrencyNamed(amount, quote, maximumFractionDigits = config.maximum_fraction_digits) {
-  if (isNaN(+amount)) return ''
-
-  return CurrencyFormatter.formatNamed(amount, quote, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits,
-    roundingMode: 'trunc',
-  })
-}
-
-export function htmlCurrency(amount, maximumFractionDigits = config.maximum_fraction_digits) {
-  if (isNaN(+amount)) return ''
-
-  const HTML_LOWEST_AMOUNT = Math.pow(10, -(maximumFractionDigits))
-
-  if (!eq(amount, 0) && lt(Big(amount).abs().toString(), HTML_LOWEST_AMOUNT)) {
-    if (gt(amount, 0)) return `<${HTML_LOWEST_AMOUNT}`
-    else return `<-${HTML_LOWEST_AMOUNT}`
+  if (threshold) {
+    const normalized = normalizeToMinimumAmount(formatted, precision)
+    formatted = round(normalized.amount, precision, 0) || 0
+    formatted = normalized.lowest ? `<${formatted}` : formatted
+    formatted = normalized.lowest && normalized.negative ? `-${formatted}` : formatted
+  } else {
+    formatted = round(formatted, precision, 0) || 0
   }
 
-  return CurrencyFormatter.formatDefault(amount, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits,
-    roundingMode: 'trunc',
-  })
+  return formatted + '%'
+}
+
+export function htmlCurrencySymboled(amount, quote, { maxPrecision = config.maximum_fraction_digits, threshold = false } = {}) {
+  if (isNaN(+amount)) return ''
+
+  let formatted = amount
+
+  if (threshold) {
+    const normalized = normalizeToMinimumAmount(formatted, maxPrecision)
+
+    formatted = CurrencyFormatter.formatSymboled(normalized.amount, quote, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+
+    formatted = normalized.lowest ? `<${formatted}` : formatted
+    formatted = normalized.lowest && normalized.negative ? `-${formatted.split('-').join('')}` : formatted 
+  } else {
+    formatted = CurrencyFormatter.formatSymboled(formatted, quote, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+  }
+
+  return formatted
+}
+
+export function htmlCurrencyNamed(amount, quote, { maxPrecision = config.maximum_fraction_digits, threshold = false } = {}) {
+  if (isNaN(+amount)) return ''
+
+  let formatted = amount
+
+  if (threshold) {
+    const normalized = normalizeToMinimumAmount(formatted, maxPrecision)
+
+    formatted = CurrencyFormatter.formatNamed(normalized.amount, quote, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+
+    formatted = normalized.lowest ? `<${formatted}` : formatted
+    formatted = normalized.lowest && normalized.negative ? `-${formatted.split('-').join('')}` : formatted
+  } else {
+    formatted = CurrencyFormatter.formatNamed(formatted, quote, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+  }
+
+  return formatted
+}
+
+export function htmlCurrency(amount, { maxPrecision = config.maximum_fraction_digits, threshold = false } = {}) {
+  if (isNaN(+amount)) return ''
+
+  let formatted = amount
+
+  if (threshold) {
+    const normalized = normalizeToMinimumAmount(formatted, maxPrecision)
+
+    formatted = CurrencyFormatter.formatDefault(normalized.amount, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+  
+    formatted = normalized.lowest ? `<${formatted}` : formatted
+    formatted = normalized.lowest && normalized.negative ? `-${formatted.split('-').join('')}` : formatted
+  } else {
+    formatted = CurrencyFormatter.formatDefault(formatted, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: maxPrecision,
+      roundingMode: 'trunc',
+    })
+  }
+
+  return formatted
 }
 
 export function htmlAddress(address) {

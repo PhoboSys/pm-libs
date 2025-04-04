@@ -10,6 +10,7 @@ import IERC20 from './abis/@openzeppelin/IERC20.json'
 import { NETWORK } from './constants'
 import { toHex } from './utils'
 import chains from './chains'
+import { serializer } from '../redux-cqrs'
 
 const logError = (error) => console.error(error) // eslint-disable-line
 
@@ -23,6 +24,7 @@ let auth = (new Promise((res, rej) => { authSigner = res })).catch(logError)
 export const web3client = {
   __cache: { },
   waitForTransaction: (hash) => WEB3_PROVIDER.waitForTransaction(hash),
+  getSigner: () => auth,
   request: async (args) => {
     const signer = await auth
     if (isAuthorized && signer) {
@@ -74,27 +76,32 @@ export const web3client = {
     return false
   },
   contract: (abi, address) => {
+
+    function serializeResult(data) {
+      return JSON.parse(JSON.stringify(data, serializer))
+    }
+
     function read(method, ...args) {
       args = address ? [address, ...args] : args
   
       const options = args.at(-1) || {}
       if (!options.blockTag) delete options.blockTag
       const client = web3client.get(args.at(0), abi, { readonly: true })
-      if (isFunction(client[method])) return client[method](...args.slice(1))
+      if (isFunction(client[method])) return client[method](...args.slice(1)).then(serializeResult)
       return Promise.reject('Method Not Found')
     }
   
     function write(method, ...args) {
       args = address ? [address, ...args] : args
       const client = web3client.get(args.at(0), abi)
-      if (isFunction(client[method])) return client[method](...args.slice(1))
+      if (isFunction(client[method])) return client[method](...args.slice(1)).then(serializeResult)
       return Promise.reject('Method Not Found')
     }
   
     function staticCall(method, ...args) {
       args = address ? [address, ...args] : args
       const client = web3client.get(args.at(0), abi)
-      if (isFunction(client[method])) return client[method].staticCall(...args.slice(1))
+      if (isFunction(client[method])) return client[method].staticCall(...args.slice(1)).then(serializeResult)
       return Promise.reject('Method Not Found')
     }
   
